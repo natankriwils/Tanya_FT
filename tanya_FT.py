@@ -14,13 +14,68 @@ def save_data(data):
     with open(data_file, 'w') as file:
         json.dump(data, file, indent=2)
 
+def main():
+    global data
+    data = load_data()
+
+    while True:
+        print("\n===== Sistem Tanya FT =====")
+        print("1. Masuk sebagai Admin")
+        print("2. Masuk sebagai Sender")
+        print("3. Keluar")
+        pilihan = input("Pilih peran (1/2/3): ").strip()
+
+        if pilihan == '1':
+            menu_admin()
+        elif pilihan == '2':
+            menu_sender()
+        elif pilihan == '3':
+            print("Terima kasih telah menggunakan Tanya FT!")
+            break
+        else:
+            print("Pilihan tidak valid.")
+
+def menu_sender():
+    while True:
+        print("\n===== Menu Sender =====")
+        print("1. Kirim Pertanyaan")
+        print("2. Lihat Pertanyaan Saya")
+        print("3. Kembali ke Menu Utama")
+        pilihan = input("Pilih opsi: ").strip()
+
+        if pilihan == '1':
+            kirim_pertanyaan()
+        elif pilihan == '2':
+            lihat_pertanyaan_user()
+        elif pilihan == '3':
+            break
+        else:
+            print("Pilihan tidak valid.")
+
+def menu_admin():
+    while True:
+        print("\n===== Menu Admin =====")
+        print("1. Lihat Semua Pertanyaan")
+        print("2. Jawab Pertanyaan")
+        print("3. Kembali ke Menu Utama")
+        pilihan = input("Pilih opsi: ").strip()
+
+        if pilihan == '1':
+            lihat_pertanyaan_admin()
+        elif pilihan == '2':
+            jawab_pertanyaan()
+        elif pilihan == '3':
+            break
+        else:
+            print("Pilihan tidak valid.")
+
 def kirim_pertanyaan():
-    print("===== Kirim Pertanyaan ke FT =====")
+    print("\n===== Kirim Pertanyaan ke FT =====")
     nama = input("Nama              : ").strip()
     email = input("Email             : ").strip()
     pertanyaan = input("Isi pertanyaan    : ").strip()
     waktu = datetime.now().isoformat()
-    
+
     id_pertanyaan = len(data["pertanyaan"]) + 1
     entri = {
         "id": id_pertanyaan,
@@ -34,15 +89,15 @@ def kirim_pertanyaan():
     }
     data["pertanyaan"].append(entri)
     save_data(data)
-    print(f"Pertanyaan berhasil dikirim dengan ID: {id_pertanyaan}")
+    print(f"\n✅ Pertanyaan berhasil dikirim dengan ID: {id_pertanyaan}")
 
 def lihat_pertanyaan_admin():
-    print("===== Lihat Semua Pertanyaan =====")
+    print("\n===== Lihat Semua Pertanyaan =====")
     if not data["pertanyaan"]:
         print("Belum ada pertanyaan.")
         return
     for p in data["pertanyaan"]:
-        print(f"ID: {p['id']}")
+        print(f"\nID: {p['id']}")
         print(f"Nama: {p['nama']}")
         print(f"Email: {p['email']}")
         print(f"Pertanyaan: {p['pertanyaan']}")
@@ -54,7 +109,7 @@ def lihat_pertanyaan_admin():
         print("-" * 40)
 
 def jawab_pertanyaan():
-    print("===== Jawab Pertanyaan =====")
+    print("\n===== Jawab Pertanyaan =====")
     try:
         id_pertanyaan = int(input("Masukkan ID pertanyaan: ").strip())
     except ValueError:
@@ -75,46 +130,23 @@ def jawab_pertanyaan():
     pertanyaan["waktu_jawaban"] = waktu_jawaban
     pertanyaan["status"] = "sudah terjawab"
     save_data(data)
-    print("Jawaban berhasil disimpan.")
+    print("\n✅ Jawaban berhasil disimpan.")
 
 def lihat_pertanyaan_user():
-    print("===== Lihat Pertanyaan Saya =====")
+    print("\n===== Lihat Pertanyaan Saya =====")
     email = input("Masukkan email Anda: ").strip()
     user_pertanyaan = [p for p in data["pertanyaan"] if p["email"] == email]
     if not user_pertanyaan:
         print("Anda belum mengirim pertanyaan.")
         return
     for p in user_pertanyaan:
-        print(f"ID: {p['id']}, Pertanyaan: {p['pertanyaan']}, Status: {p['status']}")
+        print(f"\nID: {p['id']}")
+        print(f"Pertanyaan: {p['pertanyaan']}")
+        print(f"Status: {p['status']}")
         if p["status"] == "sudah terjawab":
-            print(f"  Jawaban: {p['jawaban']}, Waktu Jawaban: {p['waktu_jawaban']}")
+            print(f"Jawaban: {p['jawaban']}")
+            print(f"Waktu Jawaban: {p['waktu_jawaban']}")
         print("-" * 40)
-
-def main():
-    global data
-    data = load_data()
-    while True:
-        print("\n===== Menu =====")
-        print("1. Kirim Pertanyaan")
-        print("2. Lihat Pertanyaan (Admin)")
-        print("3. Jawab Pertanyaan (Admin)")
-        print("4. Lihat Pertanyaan Saya")
-        print("5. Keluar")
-        
-        pilihan = input("Pilih menu: ").strip()
-        if pilihan == '1':
-            kirim_pertanyaan()
-        elif pilihan == '2':
-            lihat_pertanyaan_admin()
-        elif pilihan == '3':
-            jawab_pertanyaan()
-        elif pilihan == '4':
-            lihat_pertanyaan_user()
-        elif pilihan == '5':
-            print("Terima kasih telah menggunakan Tanya FT!")
-            break
-        else:
-            print("Pilihan tidak valid. Coba lagi.")
 
 if __name__ == "__main__":
     main()
