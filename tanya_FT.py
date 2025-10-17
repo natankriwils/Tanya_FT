@@ -20,24 +20,24 @@ def main():
 
     while True:
         print("\n===== Sistem Tanya FT =====")
-        print("1. Masuk sebagai Admin")
-        print("2. Masuk sebagai Sender")
+        print("1. Masuk sebagai Respon")
+        print("2. Masuk sebagai Pemohon")
         print("3. Keluar")
         pilihan = input("Pilih peran (1/2/3): ").strip()
 
         if pilihan == '1':
-            menu_admin()
+            menu_Respon()
         elif pilihan == '2':
-            menu_sender()
+            menu_Pemohon()
         elif pilihan == '3':
             print("Terima kasih telah menggunakan Tanya FT!")
             break
         else:
             print("Pilihan tidak valid.")
 
-def menu_sender():
+def menu_Pemohon():
     while True:
-        print("\n===== Menu Sender =====")
+        print("\n===== Menu Pemohon =====")
         print("1. Kirim Pertanyaan")
         print("2. Lihat Pertanyaan Saya")
         print("3. Kembali ke Menu Utama")
@@ -52,16 +52,16 @@ def menu_sender():
         else:
             print("Pilihan tidak valid.")
 
-def menu_admin():
+def menu_Respon():
     while True:
-        print("\n===== Menu Admin =====")
+        print("\n===== Menu Respon =====")
         print("1. Lihat Semua Pertanyaan")
         print("2. Jawab Pertanyaan")
         print("3. Kembali ke Menu Utama")
         pilihan = input("Pilih opsi: ").strip()
 
         if pilihan == '1':
-            lihat_pertanyaan_admin()
+            lihat_pertanyaan_Respon()
         elif pilihan == '2':
             jawab_pertanyaan()
         elif pilihan == '3':
@@ -91,7 +91,7 @@ def kirim_pertanyaan():
     save_data(data)
     print(f"\n✅ Pertanyaan berhasil dikirim dengan ID: {id_pertanyaan}")
 
-def lihat_pertanyaan_admin():
+def lihat_pertanyaan_Respon():
     print("\n===== Lihat Semua Pertanyaan =====")
     if not data["pertanyaan"]:
         print("Belum ada pertanyaan.")
