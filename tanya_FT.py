@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import getpass
 
 data_file = "Tanya_FT_data.json"
 
@@ -17,21 +18,36 @@ def save_data(data):
 def main():
     global data
     data = load_data()
+    ADMIN_PASSWORD = "validasi123" 
 
     while True:
         print("\n===== Sistem Tanya FT =====")
-        print("1. Masuk sebagai Respon")
-        print("2. Masuk sebagai Pemohon")
+        print("1. Masuk sebagai Pemohon")
+        print("2. Masuk sebagai Respon")
         print("3. Keluar")
         pilihan = input("Pilih peran (1/2/3): ").strip()
 
         if pilihan == '1':
-            menu_Respon()
-        elif pilihan == '2':
             menu_Pemohon()
+
+        elif pilihan == '2':
+            while True:
+                pw = input("Validasi(tekan Enter untuk batal): ").strip()
+
+                if pw == "":
+                    print("Batal. Kembali ke menu utama.")
+                    break
+
+                if pw == ADMIN_PASSWORD:
+                    respon_after_auth()
+                    break
+                else:
+                    print("Kode validasi salah")
+
         elif pilihan == '3':
             print("Terima kasih telah menggunakan Tanya FT!")
             break
+
         else:
             print("Pilihan tidak valid.")
 
@@ -107,6 +123,25 @@ def lihat_pertanyaan_Respon():
             print(f"Jawaban: {p['jawaban']}")
             print(f"Waktu Jawaban: {p['waktu_jawaban']}")
         print("-" * 40)
+
+def respon_after_auth():
+    """Tampilan cepat untuk Respon setelah autentikasi:
+    - Tampilkan semua pertanyaan
+    - Beri pilihan: 1=Jawab Pertanyaan, 2=Kembali
+    """
+    while True:
+        lihat_pertanyaan_Respon()
+        print("\n1. Jawab Pertanyaan")
+        print("2. Kembali ke Menu Utama")
+        pilihan = input("Pilih opsi: ").strip()
+        if pilihan == '1':
+            jawab_pertanyaan()
+            # setelah menjawab, kembali tampilkan daftar lagi
+            continue
+        elif pilihan == '2':
+            break
+        else:
+            print("Pilihan tidak valid.")
 
 def jawab_pertanyaan():
     print("\n===== Jawab Pertanyaan =====")
