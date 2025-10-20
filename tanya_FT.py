@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-import getpass
 
 data_file = "Tanya_FT_data.json"
 
@@ -18,7 +17,6 @@ def save_data(data):
 def main():
     global data
     data = load_data()
-    ADMIN_PASSWORD = "validasi123" 
 
     while True:
         print("\n===== Sistem Tanya FT =====")
@@ -31,6 +29,7 @@ def main():
             menu_Pemohon()
 
         elif pilihan == '2':
+            ADMIN_PASSWORD = "validasi123" 
             while True:
                 pw = input("Validasi(tekan Enter untuk batal): ").strip()
 
@@ -68,23 +67,6 @@ def menu_Pemohon():
         else:
             print("Pilihan tidak valid.")
 
-def menu_Respon():
-    while True:
-        print("\n===== Menu Respon =====")
-        print("1. Lihat Semua Pertanyaan")
-        print("2. Jawab Pertanyaan")
-        print("3. Kembali ke Menu Utama")
-        pilihan = input("Pilih opsi: ").strip()
-
-        if pilihan == '1':
-            lihat_pertanyaan_Respon()
-        elif pilihan == '2':
-            jawab_pertanyaan()
-        elif pilihan == '3':
-            break
-        else:
-            print("Pilihan tidak valid.")
-
 def kirim_pertanyaan():
     print("\n===== Kirim Pertanyaan ke FT =====")
     nama = input("Nama              : ").strip()
@@ -107,6 +89,22 @@ def kirim_pertanyaan():
     save_data(data)
     print(f"\n✅ Pertanyaan berhasil dikirim dengan ID: {id_pertanyaan}")
 
+def lihat_pertanyaan_user():
+    print("\n===== Lihat Pertanyaan Saya =====")
+    email = input("Masukkan email Anda: ").strip()
+    user_pertanyaan = [p for p in data["pertanyaan"] if p["email"] == email]
+    if not user_pertanyaan:
+        print("Anda belum mengirim pertanyaan.")
+        return
+    for p in user_pertanyaan:
+        print(f"\nID: {p['id']}")
+        print(f"Pertanyaan: {p['pertanyaan']}")
+        print(f"Status: {p['status']}")
+        if p["status"] == "sudah terjawab":
+            print(f"Jawaban: {p['jawaban']}")
+            print(f"Waktu Jawaban: {p['waktu_jawaban']}")
+        print("-" * 40)
+
 def lihat_pertanyaan_Respon():
     print("\n===== Lihat Semua Pertanyaan =====")
     if not data["pertanyaan"]:
@@ -125,18 +123,13 @@ def lihat_pertanyaan_Respon():
         print("-" * 40)
 
 def respon_after_auth():
-    """Tampilan cepat untuk Respon setelah autentikasi:
-    - Tampilkan semua pertanyaan
-    - Beri pilihan: 1=Jawab Pertanyaan, 2=Kembali
-    """
     while True:
         lihat_pertanyaan_Respon()
         print("\n1. Jawab Pertanyaan")
         print("2. Kembali ke Menu Utama")
-        pilihan = input("Pilih opsi: ").strip()
+        pilihan = input("Pilih opsi (1/2): ").strip()
         if pilihan == '1':
             jawab_pertanyaan()
-            # setelah menjawab, kembali tampilkan daftar lagi
             continue
         elif pilihan == '2':
             break
@@ -145,43 +138,33 @@ def respon_after_auth():
 
 def jawab_pertanyaan():
     print("\n===== Jawab Pertanyaan =====")
-    try:
-        id_pertanyaan = int(input("Masukkan ID pertanyaan: ").strip())
-    except ValueError:
-        print("ID tidak valid.")
-        return
-    
-    pertanyaan = next((p for p in data["pertanyaan"] if p["id"] == id_pertanyaan), None)
-    if not pertanyaan:
-        print("Pertanyaan tidak ditemukan.")
-        return
-    if pertanyaan["status"] == "sudah terjawab":
-        print("Pertanyaan ini sudah dijawab.")
-        return
-    
-    jawaban = input("Masukkan jawaban: ").strip()
-    waktu_jawaban = datetime.now().isoformat()
-    pertanyaan["jawaban"] = jawaban
-    pertanyaan["waktu_jawaban"] = waktu_jawaban
-    pertanyaan["status"] = "sudah terjawab"
-    save_data(data)
-    print("\n✅ Jawaban berhasil disimpan.")
+    while True:
+        s = input("Masukkan ID pertanyaan (Enter untuk batal): ").strip()
+        if s == "":
+            print("Batal. Kembali ke menu Respon.")
+            return
+        try:
+            id_pertanyaan = int(s)
+        except ValueError:
+            print("ID tidak valid. Masukkan angka atau tekan Enter untuk batal.")
+            continue
 
-def lihat_pertanyaan_user():
-    print("\n===== Lihat Pertanyaan Saya =====")
-    email = input("Masukkan email Anda: ").strip()
-    user_pertanyaan = [p for p in data["pertanyaan"] if p["email"] == email]
-    if not user_pertanyaan:
-        print("Anda belum mengirim pertanyaan.")
+        pertanyaan = next((p for p in data["pertanyaan"] if p["id"] == id_pertanyaan), None)
+        if not pertanyaan:
+            print("Pertanyaan tidak ditemukan. Periksa ID dan coba lagi.")
+            continue
+        if pertanyaan["status"] == "sudah terjawab":
+            print("Pertanyaan ini sudah dijawab.")
+            continue
+
+        jawaban = input("Masukkan jawaban: ").strip()
+        waktu_jawaban = datetime.now().isoformat()
+        pertanyaan["jawaban"] = jawaban
+        pertanyaan["waktu_jawaban"] = waktu_jawaban
+        pertanyaan["status"] = "sudah terjawab"
+        save_data(data)
+        print("\n✅ Jawaban berhasil disimpan.")
         return
-    for p in user_pertanyaan:
-        print(f"\nID: {p['id']}")
-        print(f"Pertanyaan: {p['pertanyaan']}")
-        print(f"Status: {p['status']}")
-        if p["status"] == "sudah terjawab":
-            print(f"Jawaban: {p['jawaban']}")
-            print(f"Waktu Jawaban: {p['waktu_jawaban']}")
-        print("-" * 40)
 
 if __name__ == "__main__":
     main()
