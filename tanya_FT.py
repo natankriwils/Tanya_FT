@@ -56,7 +56,7 @@ def menu_Pemohon():
         print("1. Kirim Pertanyaan")
         print("2. Lihat Pertanyaan Saya")
         print("3. Kembali ke Menu Utama")
-        pilihan = input("Pilih opsi: ").strip()
+        pilihan = input("Pilih opsi (1/2/3): ").strip()
 
         if pilihan == '1':
             kirim_pertanyaan()
